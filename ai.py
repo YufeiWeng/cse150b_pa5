@@ -19,16 +19,16 @@ class AI:
         while True:
             sigma, domains = self.propagate(sigma, domains)
             if sigma[(-1, -1)] != -1:
-                if len(sigma.keys()) == 82:
-                    for spot in domains.keys():
-                        domains[spot] = [domains[spot]]
+                if len(sigma.keys()) == 81:
+                    ##for spot in domains.keys():
+                        ##domains[spot] = [domains[spot]]
                     return domains
                 else:
                     sigma, x = self.makeDecision(sigma, domains)
-                    delta.append(copy.deepcopy(sigma), x, copy.deepcopy(domains))
+                    delta.append((copy.deepcopy(sigma), x, copy.deepcopy(domains)))
             else:
                 if len(delta) == 0:
-                    return None
+                    return "no solution"
                 else:
                     sigma, domains = self.backTrack(delta)       
 
@@ -50,9 +50,13 @@ class AI:
                 if x not in sigma.keys() and len(domains[x]) == 1:
                     sigma[x] = domains[x][0]
             for x in sigma.keys():
-                if len(domains[x] > 1):
-                    domains[x] = sigma[a]
+                ## (-1, -1) not in domains
+                if x in domains.keys() and len(domains[x]) > 1:
+                    domains[x] = [sigma[x]]
             for x in domains.keys():
+                ## bug: if len(domains[x]) == 0:
+                ##      TypeError: object of type 'int' has no len() 
+                ## if not isinstance(domains[x], list)
                 if len(domains[x]) == 0:
                     sigma[(-1, -1)] = -1
                     return sigma, domains
@@ -67,8 +71,9 @@ class AI:
     
     def makeDecision(self, sigma, domains):
         numOfGuesses = float('inf')
-        spotWeGuess = None
-        a = None
+        spotWeGuess = (0, 0)
+        ###super wired design bug: a cant be None
+        a = 88888888
         for x in domains.keys():
             if x not in sigma.keys() and len(domains[x]) > 1:
                 if len(domains[x]) < numOfGuesses:
@@ -79,8 +84,7 @@ class AI:
     
     def backTrack(self, delta):
         sigma, x, domains = delta.pop()
-        a = sigma[x]
-        sigma.pop(x)
+        a = sigma.pop(x)
         domains[x].remove(a)
         return sigma, domains
         
