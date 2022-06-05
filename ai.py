@@ -19,13 +19,14 @@ class AI:
         while True:
             sigma, domains = self.propagate(sigma, domains)
             if sigma[(-1, -1)] != -1:
-                if len(sigma.keys()) == 82:
+                if len(sigma.keys()) >= 82:
                     ##for spot in domains.keys():
                         ##domains[spot] = [domains[spot]]
                     return domains
                 else:
                     sigma, x = self.makeDecision(sigma, domains)
                     delta.append((copy.deepcopy(sigma), x, copy.deepcopy(domains)))
+                    #domains[x] = [sigma[x]]
             else:
                 if len(delta) == 0:
                     return "no solution"
@@ -43,6 +44,7 @@ class AI:
         # <- TODO: delete this block
         
     # TODO: add any supporting function you need
+    
     
     def propagate(self, sigma, domains):
         
@@ -133,10 +135,10 @@ class AI:
         
         for x in domains.keys():
             if x not in sigma.keys():
-                if len(domains[x]) == 0:
-                    sigma[x] = 0
-                    return sigma, x
-                else:
+                #if len(domains[x]) == 0:
+                #    sigma[x] = 0
+                #    return sigma, x
+                #else:
                     sigma[x] = domains[x][0]
                     return sigma, x
 
@@ -158,9 +160,6 @@ class AI:
     def backTrack(self, delta):
         sigma, x, domains = delta.pop()
         a = sigma.pop(x)
-        print("!")
-        print(a)
-        print(domains[x])
         domains[x].remove(a)
         return sigma, domains
         
