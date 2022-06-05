@@ -5,6 +5,8 @@ from game import sd_peers, sd_spots, sd_domain_num, init_domains, \
     restrict_domain, SD_DIM, SD_SIZE
 import random, copy
 
+#debug is so hard
+#took me 4hrs; keep printing and printing
 class AI:
     def __init__(self):
         pass
