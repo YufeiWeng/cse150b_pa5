@@ -19,7 +19,7 @@ class AI:
         while True:
             sigma, domains = self.propagate(sigma, domains)
             if sigma[(-1, -1)] != -1:
-                if len(sigma.keys()) == 81:
+                if len(sigma.keys()) == 82:
                     ##for spot in domains.keys():
                         ##domains[spot] = [domains[spot]]
                     return domains
@@ -43,7 +43,9 @@ class AI:
         # <- TODO: delete this block
         
     # TODO: add any supporting function you need
+    
     def propagate(self, sigma, domains):
+        
         sigma[(-1,-1)] = 0
         while True:
             for x in domains.keys():
@@ -69,7 +71,53 @@ class AI:
             return sigma, domains    
         return None
     
+    """""
+    def propagate(self, assignment, D):
+        domain_key = D.keys()
+        N_s = [0,1,2,3,4,5,6,7,8]
+        assignment["Conflict"] = 0
+        while True:
+            for key in domain_key:
+                if len(D[key]) == 1 and key not in assignment.keys():
+                    assignment[key]=D[key][0]
+            for a in assignment.keys():
+                if(a != "Conflict"):
+                    D[a] = [assignment[a]]
+            for key in domain_key:
+                if len(D[key]) == 0:
+                    assignment["Conflict"] = 1
+                    return assignment, D
+            #If does not meet the constraint
+            #Check Row
+            #Check Column
+            #Check Box
+            check = True
+            for key in domain_key:
+                for n in N_s:
+                    if (key[0],n) != key and len(D[(key[0],n)]) == 1:
+                        if D[(key[0],n)][0] in D[key]:
+                            D[key].remove(D[(key[0],n)][0])
+                            check = False
+                for n in N_s:
+                    if (n,key[1]) != key and len(D[(n,key[1])]) == 1:
+                        if D[(n,key[1])][0] in D[key]:
+                            D[key].remove(D[(n,key[1])][0])
+                            check = False
+                i = int(key[0]/3)
+                j = int(key[1]/3)
+                for x in range(3):
+                    for y in range(3):
+                        if( (i*3)+x , (j*3)+y ) != key and len(D[( (i*3)+x , (j*3)+y ) ]) == 1:
+                            if D[( (i*3)+x , (j*3)+y ) ][0] in D[key]:
+                                D[key].remove(D[( (i*3)+x , (j*3)+y ) ][0])
+                                check = False
+            if check:
+                return assignment, D
+        return assignment, D
+        """""
+    
     def makeDecision(self, sigma, domains):
+        """""
         numOfGuesses = float('inf')
         spotWeGuess = (0, 0)
         ###super wired design bug: a cant be None
@@ -81,10 +129,38 @@ class AI:
                    spotWeGuess = x
         sigma[spotWeGuess] = a
         return sigma, spotWeGuess
-    
+        """""
+        
+        for x in domains.keys():
+            if x not in sigma.keys():
+                if len(domains[x]) == 0:
+                    sigma[x] = 0
+                    return sigma, x
+                else:
+                    sigma[x] = domains[x][0]
+                    return sigma, x
+
+        
+        """""
+        keys = domains.keys()
+        a = sigma.keys()
+        min_choices = 9
+        choice_key = 0
+        for key in keys:
+            if len(domains[key]) < min_choices and key not in a and len(domains[key]) > 1:
+                min_choices = len(domains[key])
+                choice_key = key
+
+        sigma[choice_key] = random.choice(domains[choice_key])
+        return sigma, choice_key
+        """""
+
     def backTrack(self, delta):
         sigma, x, domains = delta.pop()
         a = sigma.pop(x)
+        print("!")
+        print(a)
+        print(domains[x])
         domains[x].remove(a)
         return sigma, domains
         
