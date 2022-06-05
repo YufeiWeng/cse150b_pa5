@@ -55,6 +55,7 @@ class AI:
                     sigma[(-1, -1)] = -1
                     return sigma, domains
             ##check for rows, cols, then blocks
+            ##nvm I find a easier way to do it 
      
             doesRemoveSmt = False
             for spot in domains.keys():
@@ -72,9 +73,11 @@ class AI:
     
     def makeDecision(self, sigma, domains):
         for x in domains.keys():
+            ##always pick top left first
             if x not in sigma.keys():
-                    sigma[x] = domains[x][0]
-                    return sigma, x
+                ##always guess smallest one first
+                sigma[x] = domains[x][0]
+                return sigma, x
 
     def backTrack(self, delta):
         sigma, x, domains = delta.pop()
